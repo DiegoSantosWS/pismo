@@ -34,11 +34,10 @@ func createAccount(ctx context.Context, input AccountInput) (acc Account, err er
 
 	defer db.Rollback()
 
-	doc := input.Document
-	date := input.CreatedAt
-
-	queryInsert := `INSERT INTO account(doc_number, created_at) VALUES ($1, $2)`
-	if _, err = db.ExecContext(ctx, queryInsert, doc, date); err != nil {
+	var id int64
+	queryInsert := `INSERT INTO account(doc_number, created_at) VALUES ($1, $2) RETURNING id`
+	err = db.QueryRowContext(ctx, queryInsert, input.Document, input.CreatedAt).Scan(&id)
+	if err != nil {
 		log.Println("Query: ", err)
 		return
 	}
@@ -48,7 +47,9 @@ func createAccount(ctx context.Context, input AccountInput) (acc Account, err er
 		return
 	}
 
+	log.Println("id", id)
 	acc = Account{
+		ID:        id,
 		Document:  input.Document,
 		CreatedAt: input.CreatedAt,
 	}
