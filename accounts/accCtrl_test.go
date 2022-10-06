@@ -26,30 +26,30 @@ func TestCreateAccount(t *testing.T) {
 		ErrExp  error
 	}{
 		{
-			Name:    "Case acc 01",
+			Name:    "Case create acc 01",
 			CaseAcc: "01",
 			Input: accounts.AccountInput{
 				Document: "123456789",
 			},
-			Result: "./testdata/accs/1/result.json",
+			Result: "./testdata/accs/create/1/result.json",
 			ErrExp: nil,
 		},
 		{
-			Name:    "Case acc 02",
+			Name:    "Case create acc 02",
 			CaseAcc: "02",
 			Input: accounts.AccountInput{
 				Document: "01669923354",
 			},
-			Result: "./testdata/accs/2/result.json",
+			Result: "./testdata/accs/create/2/result.json",
 			ErrExp: nil,
 		},
 		{
-			Name:    "Case acc 03",
+			Name:    "Case create acc 03",
 			CaseAcc: "03",
 			Input: accounts.AccountInput{
 				Document: "",
 			},
-			Result: "./testdata/accs/3/result.json",
+			Result: "./testdata/accs/create/3/result.json",
 			ErrExp: errorsapi.ErrDocNotFound,
 		},
 	}
@@ -85,6 +85,77 @@ func testCreateAccount(t *testing.T, input accounts.AccountInput, name, expResul
 	}
 
 	exp := accounts.Account{}
+	readJSONFile(t, expResult, &exp)
+	compareAccount(t, name, exp, got)
+}
+
+func TestGetAccount(t *testing.T) {
+	casesAcc := []struct {
+		Name   string
+		ID     int64
+		Result string
+		ErrExp error
+	}{
+		{
+			Name:   "Case read acc 01",
+			ID:     1,
+			Result: "./testdata/accs/read/1/result.json",
+			ErrExp: nil,
+		},
+		{
+			Name:   "Case read acc 02",
+			ID:     2,
+			Result: "./testdata/accs/read/2/result.json",
+			ErrExp: nil,
+		},
+		{
+			Name:   "Case read acc 03",
+			ID:     3,
+			Result: "./testdata/accs/read/3/result.json",
+			ErrExp: nil,
+		},
+		{
+			Name:   "Case read acc 04",
+			ID:     20,
+			Result: "./testdata/accs/read/4/result.json",
+			ErrExp: errorsapi.ErrNotFoundTableDB,
+		},
+	}
+
+	for _, tc := range casesAcc {
+		t.Run(tc.Name, func(t *testing.T) {
+			testGetAccount(t, tc.Name, tc.Result, tc.ID, tc.ErrExp)
+		})
+	}
+}
+
+func testGetAccount(t *testing.T, name, expResult string, accID int64, errExp error) {
+	if len(*fileTest) > 0 {
+		if !strings.Contains(expResult, *fileTest) {
+			t.Skipf("Skipped the case %s on test unity", name)
+			return
+		}
+	}
+
+	ctx := context.Background()
+	readAcc := RetrieveReadAccountMock()
+	got, err := accounts.GetAccount(ctx, readAcc, accID)
+	if err != nil && err == errExp {
+		return
+	}
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if *update {
+		createJSONFile(t, expResult, got, true)
+		return
+	}
+
+	exp := accounts.Account{}
+	readJSONFile(t, expResult, &exp)
 	compareAccount(t, name, exp, got)
 }
 

@@ -22,7 +22,7 @@ func AnswerRequest(w http.ResponseWriter, r *http.Request, in interface{}, err e
 		statusCode = http.StatusUnauthorized
 	case errorsapi.ErrAlreadyExist, errorsapi.ErrAlreadyExist:
 		statusCode = http.StatusConflict
-	case errorsapi.ErrNotFoundCollectionDB, errorsapi.ErrDateTimeExpires, errorsapi.ErrNotWorkingDay, errorsapi.ErrNotFoundCollectionDB, errorsapi.ErrDateTimeExpires:
+	case errorsapi.ErrNotFoundTableDB, errorsapi.ErrDateTimeExpires, errorsapi.ErrNotWorkingDay, errorsapi.ErrNotFoundTableDB, errorsapi.ErrDateTimeExpires:
 		statusCode = http.StatusNotAcceptable
 	case errorsapi.ErrChangePassword, errorsapi.ErrChangePassword:
 		statusCode = http.StatusForbidden
@@ -34,6 +34,7 @@ func AnswerRequest(w http.ResponseWriter, r *http.Request, in interface{}, err e
 	if err != nil {
 		log.Println(err)
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	if _, err := w.Write(res); err != nil {

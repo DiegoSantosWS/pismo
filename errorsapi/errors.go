@@ -16,14 +16,14 @@ var (
 	// ErrNotStartTransactionDB error by commit transaction
 	ErrNotStartTransactionDB = errors.New("Transaction not started")
 
-	// ErrFindCollectionDB couldn't find to query executed
-	ErrFindCollectionDB = errors.New("Failed couldn't find to query executed")
+	// ErrFindTableDB couldn't find to query executed
+	ErrFindTableDB = errors.New("Failed couldn't find to query executed")
 
-	// ErrNotFoundCollectionDB No results found in collection
-	ErrNotFoundCollectionDB = errors.New("No results found in collection")
+	// ErrNotFoundTableDB No results found in table
+	ErrNotFoundTableDB = errors.New("No results found in table")
 
-	// ErrNotInsertCollectionDB return err when not insert
-	ErrNotInsertCollectionDB = errors.New("Could not enter required information")
+	// ErrNotInsertTableDB return err when not insert
+	ErrNotInsertTableDB = errors.New("Could not enter required information")
 
 	// ErrNotUpdate error ao realizar o update
 	ErrNotUpdate = errors.New("Could not perform requested update")

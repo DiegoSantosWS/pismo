@@ -23,8 +23,8 @@ func NewRouter() *http.Server {
 	srv := &http.Server{
 		Addr: "127.0.0.1:8080",
 		// Good practice to set timeouts to avoid Slowloris attacks.
-		WriteTimeout: time.Second * 15,
-		ReadTimeout:  time.Second * 15,
+		WriteTimeout: time.Second * 3,
+		ReadTimeout:  time.Second * 3,
 		IdleTimeout:  time.Second * 60,
 		Handler:      r, // Pass our instance of gorilla/mux in.
 	}

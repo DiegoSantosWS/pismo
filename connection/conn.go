@@ -16,7 +16,6 @@ func Load(ctx context.Context) {
 		log.Println("ERROR LOAD: ", err)
 		return
 	}
-	// defer db.Close()
 
 	err = db.PingContext(ctx)
 	if err != nil {
@@ -24,6 +23,7 @@ func Load(ctx context.Context) {
 	}
 }
 
+// Close close connection case opened
 func Close() {
 	if db == nil {
 		return

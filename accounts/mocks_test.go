@@ -4,7 +4,9 @@ import (
 	"context"
 	"math/rand"
 	"pismo/accounts"
+	"pismo/errorsapi"
 	"testing"
+	"time"
 )
 
 type dbMockAccount struct {
@@ -33,6 +35,29 @@ func (db dbMockAccount) CreateAccount(ctx context.Context, input accounts.Accoun
 }
 
 func (db dbMockAccount) GetAccount(ctx context.Context, accID int64) (acc accounts.Account, err error) {
+	switch accID {
+	case 1:
+		acc = accounts.Account{
+			ID:        1,
+			Document:  "01648808890",
+			CreatedAt: time.Date(2022, time.October, 4, 12, 0, 0, 0, time.UTC),
+		}
+	case 2:
+		acc = accounts.Account{
+			ID:        2,
+			Document:  "01245697845",
+			CreatedAt: time.Date(2022, time.October, 5, 12, 0, 0, 0, time.UTC),
+		}
+	case 3:
+		acc = accounts.Account{
+			ID:        3,
+			Document:  "01648808890",
+			CreatedAt: time.Date(2022, time.October, 6, 12, 0, 0, 0, time.UTC),
+		}
+	default:
+		err = errorsapi.ErrNotFoundTableDB
+	}
+
 	return
 }
 
