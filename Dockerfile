@@ -16,6 +16,10 @@ RUN go mod download
 RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin latest && \
    gosec ./...
 
+# revive (Go lint successor)
+RUN go install github.com/mgechev/revive@latest && \
+    revive -config revive-config.toml ./...
+
 RUN go test ./... -v
 
 # Build dynamically linked Go binary
