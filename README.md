@@ -48,4 +48,18 @@ $: docker-compose up postgres pismo
 $: docker-compose up -d postgres pismo
 ```
 
-After of run open the browser or postman and run the endpoints 
+After of run open the browser or postman and run the endpoints
+
+#### CURL REQUEST
+
+```bash
+curl http://localhost:8080/account/1
+```
+
+#### Result
+```json
+{
+    "id": 1,
+    "doc_number": "05769904496",
+    "created_at": "2022-10-05T19:08:05.034872Z"
+}
