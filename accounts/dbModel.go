@@ -16,8 +16,8 @@ func getAccount(ctx context.Context, accID int64) (acc Account, err error) {
 		return
 	}
 
-	consts := `SELECT id, doc_number, created_at FROM account WHERE id = $1`
-	err = db.QueryRowContext(ctx, consts, accID).Scan(&acc.ID, &acc.Document, &acc.CreatedAt)
+	querySelect := `SELECT id, doc_number, created_at FROM account WHERE id = $1`
+	err = db.QueryRowContext(ctx, querySelect, accID).Scan(&acc.ID, &acc.Document, &acc.CreatedAt)
 	if err != nil {
 		log.Println("Query: ", err)
 	}

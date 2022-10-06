@@ -75,4 +75,8 @@ var (
 
 	// ErrServerMaintenance error is for when the server is in maintenance
 	ErrServerMaintenance = errors.New("Server is in maintenance")
+	// ErrTransactionAmountIsNegative error when the amount is positive
+	ErrTransactionAmountIsNegative = errors.New("The value must be negative")
+	// ErrTransactionAmountIsPositive error when the amount is negative
+	ErrTransactionAmountIsPositive = errors.New("The value must be positive")
 )

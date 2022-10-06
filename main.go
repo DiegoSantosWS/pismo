@@ -4,12 +4,11 @@ import (
 	"context"
 	"flag"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"pismo/connection"
-	"pismo/router"
 	"pismo/utils"
+	"pismo/webservice"
 	"syscall"
 	"time"
 
@@ -26,35 +25,32 @@ func main() {
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*3, "the duration for which the server gracefully wait for existing connections to finish - e.g. 3s or 1m")
 	flag.Parse()
 
-	ctx, cancel, srv := start()
-	defer shutdown(ctx, cancel, wait, srv)
+	cancel := start()
+	defer shutdown(cancel, wait)
 	waitShutdown()
 }
 
-func start() (ctx context.Context, cancel context.CancelFunc, srv *http.Server) {
-	ctx, cancel = context.WithCancel(context.Background())
-	srv = router.NewRouter()
+func start() (cancel context.CancelFunc) {
+	ctx, cancel := context.WithCancel(context.Background())
+	webservice.NewRouter()
 	connection.Load(ctx)
 	return
 }
 
-func shutdown(ctx context.Context, cancel context.CancelFunc, wait time.Duration, srv *http.Server) {
+func shutdown(cancel context.CancelFunc, wait time.Duration) {
 	cancel()
 	// Create a deadline to wait for.
-	ctx, cancel = context.WithTimeout(ctx, wait)
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
 
 	connection.Close()
-	err := srv.Shutdown(ctx)
-	if err != nil {
-		log.Println(err)
-	}
+	webservice.Shutdown(ctx)
 }
 
 // waitShutdown waits until is going to die
 func waitShutdown() {
 	sigc := make(chan os.Signal, 1)
-	signal.Notify(sigc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
+	signal.Notify(sigc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	s := <-sigc
 	log.Printf("[ WaitShutdown ] signal received [%v] canceling everything", s)
 }

@@ -1,4 +1,4 @@
-package apiansower
+package apianswer
 
 import (
 	"encoding/json"
