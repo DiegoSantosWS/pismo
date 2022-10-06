@@ -2,6 +2,7 @@ package transactions_test
 
 import (
 	"context"
+	"log"
 	"pismo/errorsapi"
 	"pismo/helpertest"
 	"pismo/transactions"
@@ -69,8 +70,10 @@ func TestCheckValue(t *testing.T) {
 
 	for _, tc := range casesValue {
 		t.Run(tc.Name, func(t *testing.T) {
+			log.Println(tc.Name)
 			err := transactions.CheckValue(tc.OpType, tc.Value)
 			if err != nil {
+				log.Println(err)
 				assert.EqualError(t, err, tc.Err.Error())
 			}
 		})
