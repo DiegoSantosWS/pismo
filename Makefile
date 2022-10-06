@@ -25,4 +25,4 @@ clean: # remove o binanrio gerado
 	./$(BINARY_NAME)
 
 # Basic command
-BINARY_NAME=daur
+BINARY_NAME=pismo
