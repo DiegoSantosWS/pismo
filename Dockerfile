@@ -20,7 +20,8 @@ RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh
 RUN go install github.com/mgechev/revive@latest && \
     revive -config revive-config.toml ./...
 
-RUN go test ./... -v
+# RUN UNIT TEST
+RUN go test -test.short -v ./...
 
 # Build dynamically linked Go binary
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \

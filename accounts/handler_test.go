@@ -7,10 +7,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"pismo/accounts"
+	"pismo/helpertest"
 	"testing"
 )
 
 func TestGetterAccount(t *testing.T) {
+	helpertest.CheckSkipTestType(t, helpertest.UnitTest)
+
 	path := fmt.Sprintf("http://localhost:8080/account/%s", "1")
 	_, err := http.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
@@ -26,6 +29,8 @@ func TestGetterAccount(t *testing.T) {
 }
 
 func TestWriteAccount(t *testing.T) {
+	helpertest.CheckSkipTestType(t, helpertest.UnitTest)
+
 	requestJSON, err := json.Marshal(accounts.AccountInput{ID: 15, Document: "147892521522"})
 	if err != nil {
 		t.Fatal(err)

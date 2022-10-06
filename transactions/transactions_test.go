@@ -15,6 +15,8 @@ import (
 )
 
 func TestCheckValue(t *testing.T) {
+	helpertest.CheckSkipTestType(t, helpertest.UnitTest)
+
 	casesValue := []struct {
 		Name   string
 		Value  float64

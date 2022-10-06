@@ -7,6 +7,7 @@ import (
 	"os"
 	"pismo/accounts"
 	"pismo/errorsapi"
+	"pismo/helpertest"
 	"strings"
 	"testing"
 
@@ -18,6 +19,8 @@ var update = flag.Bool("update", false, "update result file")
 var fileTest = flag.String("case", "", "specifies which test case to update")
 
 func TestCreateAccount(t *testing.T) {
+	helpertest.CheckSkipTestType(t, helpertest.UnitTest)
+
 	casesAcc := []struct {
 		Name    string
 		Input   accounts.AccountInput
@@ -90,6 +93,7 @@ func testCreateAccount(t *testing.T, input accounts.AccountInput, name, expResul
 }
 
 func TestGetAccount(t *testing.T) {
+	helpertest.CheckSkipTestType(t, helpertest.UnitTest)
 	casesAcc := []struct {
 		Name   string
 		ID     int64
