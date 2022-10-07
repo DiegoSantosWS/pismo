@@ -4,15 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"pismo/accounts"
 	"pismo/connection"
 	"pismo/helpertest"
-	"strings"
 	"testing"
-
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 // Global vars to be used between tests.
@@ -23,11 +18,11 @@ func TestAccounts(t *testing.T) {
 	ctx := context.Background()
 
 	containerRequest := helpertest.ContainerRequest{
-		Request:   requesContainerPG(),
+		Request:   helpertest.MountContainersPG("accounts", "postgres:latest", "postgres", "postgres", "pismodb"),
 		PortToMap: "5432", // Will be used to find out which is the random mapped available port at helpertest.
 	}
 
-	pgContainer := helpertest.CreateTestContainer(t, ctx, containerRequest)
+	pgContainer := helpertest.CreateTestContainer(ctx, t, containerRequest)
 	defer func() {
 		connection.Close()
 		// This defer makes sure that no docker leftover will exist after the tests are done.
@@ -41,7 +36,6 @@ func TestAccounts(t *testing.T) {
 	w := accounts.RetrieveWriteAccount()
 
 	t.Run("CREATE ACCOUNT", func(t *testing.T) {
-		log.Println("starting tests")
 		acc, err := accounts.CreateAccount(ctx, w, accounts.AccountInput{
 			Document: "01688797634",
 		})
@@ -52,21 +46,20 @@ func TestAccounts(t *testing.T) {
 	})
 
 	r := accounts.RetrieveReadAccount()
-	t.Run("GET ACCOUNT", func(t *testing.T) {
+	t.Run("GET ACCOUNT CREATED", func(t *testing.T) {
 		log.Println("starting tests")
 		acc, err := accounts.GetAccount(ctx, r, accID)
 		if err != nil {
 			t.Error(err)
 		}
 		if acc.ID != accID {
-			t.Errorf("[] ID not match id expected [%d] id receive [%d]", accID, acc.ID)
+			t.Errorf("ID not match id expected [%d] id receive [%d]", accID, acc.ID)
 		}
 
 		log.Printf("%+v", acc)
 	})
 
 	t.Run("GET ACCOUNT 1", func(t *testing.T) {
-		log.Println("starting tests")
 		acc, err := accounts.GetAccount(ctx, r, 1)
 		if err != nil {
 			t.Error(err)
@@ -77,36 +70,6 @@ func TestAccounts(t *testing.T) {
 
 		log.Printf("%+v", acc)
 	})
-}
-
-func requesContainerPG() (requestPG testcontainers.ContainerRequest) {
-	packageName := "accounts"
-	workingDir, _ := os.Getwd()
-	rootDir := strings.Replace(workingDir, packageName, "", 1)
-	mountFrom := fmt.Sprintf("%s/db/init.sql", rootDir)
-	mountTo := "/docker-entrypoint-initdb.d/create_tables.sql"
-
-	requestPG = testcontainers.ContainerRequest{
-		Name:  "pismo_test_db",
-		Image: "postgres:latest", // ANY docker image works here, including dockerized services!
-		ExposedPorts: []string{
-			//When you use ExposedPorts you have to imagine yourself using docker run -p <port>. When you do so, dockerd
-			//maps the selected <port> from inside the container to a random one available on your host.
-			"5432/tcp",
-		},
-		Mounts: testcontainers.Mounts(testcontainers.BindMount(mountFrom, testcontainers.ContainerMountTarget(mountTo))),
-		Env: map[string]string{
-			"POSTGRES_USER":     fmt.Sprintf("postgres"),
-			"POSTGRES_PASSWORD": fmt.Sprint("postgres"),
-			"POSTGRES_DB":       fmt.Sprint("pismodb"),
-		},
-		//WaitingFor is a field you can use to validate when a container is ready. It is important to get this set
-		//because it helps to know when the container is ready to receive any traffic. In this, case we check for the
-		//logs we know come from Neo4j, telling us that it is ready to accept requests.
-		WaitingFor: wait.ForListeningPort("5432/tcp"),
-	}
-
-	return
 }
 
 func setEnvsdb(t *testing.T, pgc helpertest.TestContainer) {

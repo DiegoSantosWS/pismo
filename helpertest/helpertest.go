@@ -2,10 +2,16 @@ package helpertest
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
+
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+// CreateJSONFile create new json file
 func CreateJSONFile(t *testing.T, fName string, data interface{}, indent ...bool) {
 	var dataByte []byte
 	var err error
@@ -25,6 +31,7 @@ func CreateJSONFile(t *testing.T, fName string, data interface{}, indent ...bool
 	}
 }
 
+// ReadJSONFile read the json file
 func ReadJSONFile(t *testing.T, fName string, data interface{}) {
 	dataByte, err := os.ReadFile(fName) // #nosec
 	if err != nil {
@@ -41,9 +48,12 @@ func ReadJSONFile(t *testing.T, fName string, data interface{}) {
 type TestType string
 
 const (
-	UnitTest        = "unit test"
+	// UnitTest command unit test
+	UnitTest = "unit test"
+	// IntegrationTest command to integration test
 	IntegrationTest = "integration test"
-	FunctionalTest  = "functional test"
+	// FunctionalTest command to functional test
+	FunctionalTest = "functional test"
 )
 
 func (t TestType) toBool() bool {
@@ -61,6 +71,7 @@ func CheckSkipTestType(t *testing.T, testType TestType) {
 	}
 }
 
+// Env represent a env to system
 type Env struct {
 	Key, Value string
 }
@@ -72,4 +83,34 @@ func SetupEnvs(t *testing.T, envs []Env) {
 			t.Fatalf("[ helper ] failed to set env: [ %v ]", err)
 		}
 	}
+}
+
+// MountContainersPG mount container
+func MountContainersPG(pkgName, imageName, usr, pass, dbn string) (requestPG testcontainers.ContainerRequest) {
+	workingDir, _ := os.Getwd()
+	rootDir := strings.Replace(workingDir, pkgName, "", 1)
+	mountFrom := fmt.Sprintf("%s/db/init.sql", rootDir)
+	mountTo := "/docker-entrypoint-initdb.d/create_tables.sql"
+
+	requestPG = testcontainers.ContainerRequest{
+		Name:  fmt.Sprintf("%s_test_db", pkgName),
+		Image: imageName, // ANY docker image works here, including dockerized services!
+		ExposedPorts: []string{
+			//When you use ExposedPorts you have to imagine yourself using docker run -p <port>. When you do so, dockerd
+			//maps the selected <port> from inside the container to a random one available on your host.
+			"5432/tcp",
+		},
+		Mounts: testcontainers.Mounts(testcontainers.BindMount(mountFrom, testcontainers.ContainerMountTarget(mountTo))),
+		Env: map[string]string{
+			"POSTGRES_USER":     usr,
+			"POSTGRES_PASSWORD": pass,
+			"POSTGRES_DB":       dbn,
+		},
+		//WaitingFor is a field you can use to validate when a container is ready. It is important to get this set
+		//because it helps to know when the container is ready to receive any traffic. In this, case we check for the
+		//logs we know come from Neo4j, telling us that it is ready to accept requests.
+		WaitingFor: wait.ForListeningPort("5432/tcp"),
+	}
+
+	return
 }
