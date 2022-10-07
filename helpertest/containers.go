@@ -21,9 +21,8 @@ type TestContainer struct {
 	MappedPort nat.Port
 }
 
-// CreateTestContainer is used to create docker containers that are to be used only for functional tests. Always remember to
-// set its related Envs and terminate with a defer/**
-func CreateTestContainer(t *testing.T, ctx context.Context, containerRequest ContainerRequest) (testContainer TestContainer) {
+// CreateTestContainer is used to create docker containers that are to be used only for functional tests. Always remember to set its related Envs and terminate with a defer
+func CreateTestContainer(ctx context.Context, t *testing.T, containerRequest ContainerRequest) (testContainer TestContainer) {
 	container, err := startContainer(ctx, containerRequest.Request)
 	if err != nil {
 		t.Fatalf("[ helper ] failed to start container: %v\n", err)

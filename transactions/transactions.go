@@ -3,6 +3,7 @@ package transactions
 import (
 	"context"
 	"log"
+	"math"
 	"pismo/errorsapi"
 	"pismo/utils"
 )
@@ -28,11 +29,11 @@ func CreateTransaction(ctx context.Context, opT OpTypesGetter, w TransactionWrit
 func checkValue(typeOp int64, value float64) (err error) {
 	switch typeOp {
 	case utils.OpWithdraw, utils.OpParceling, utils.OpAtSight:
-		if value >= 0 {
+		if !math.Signbit(value) {
 			err = errorsapi.ErrTransactionAmountIsNegative
 		}
 	default: // pagamento
-		if value <= 0 {
+		if math.Signbit(value) {
 			err = errorsapi.ErrTransactionAmountIsPositive
 		}
 	}

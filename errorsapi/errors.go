@@ -4,9 +4,11 @@ import "errors"
 
 var (
 	// ErrInputEmpty input is empty
-	ErrInputEmpty error = errors.New("Input cannot be empty")
+	ErrInputEmpty = errors.New("Input cannot be empty")
+
 	// ErrFieldEmpty field is empty
-	ErrFieldEmpty error = errors.New("this field cannot be empty")
+	ErrFieldEmpty = errors.New("this field cannot be empty")
+
 	//ErrInvalidBody if tried to unmarshall from json and failes at it
 	ErrInvalidBody = errors.New("The sent data is not as expected")
 
@@ -75,8 +77,10 @@ var (
 
 	// ErrServerMaintenance error is for when the server is in maintenance
 	ErrServerMaintenance = errors.New("Server is in maintenance")
+
 	// ErrTransactionAmountIsNegative error when the amount is positive
 	ErrTransactionAmountIsNegative = errors.New("The value must be negative")
+
 	// ErrTransactionAmountIsPositive error when the amount is negative
 	ErrTransactionAmountIsPositive = errors.New("The value must be positive")
 )

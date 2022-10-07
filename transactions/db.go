@@ -40,8 +40,9 @@ func createTransactions(ctx context.Context, input TransactionInput) (trans Tran
 	}
 	defer db.Rollback()
 
-	queryInsert := `INSERT INTO transactions(account_id, operation_type_id, amount, event_date) VALUES ($1, $2, $3, $4)`
-	res, err := db.ExecContext(ctx, queryInsert, input.AccountID, input.OperationType, input.Amount, input.EventDate)
+	var id int64
+	queryInsert := `INSERT INTO transactions(account_id, operation_type_id, amount, event_date) VALUES ($1, $2, $3, $4) RETURNING id`
+	err = db.QueryRowContext(ctx, queryInsert, input.AccountID, input.OperationType, input.Amount, input.EventDate).Scan(&id)
 	if err != nil {
 		log.Println("Query: ", err)
 		return
@@ -52,8 +53,9 @@ func createTransactions(ctx context.Context, input TransactionInput) (trans Tran
 		return
 	}
 
-	if ok, err := res.RowsAffected(); ok > 0 && err == nil {
+	if id > 0 {
 		trans = Transaction{
+			TransactionID: id,
 			AccountID:     input.AccountID,
 			OperationType: input.OperationType,
 			Amount:        input.Amount,
