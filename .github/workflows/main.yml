@@ -1,0 +1,59 @@
+name: Build pismo
+on:
+  push:
+    branches:
+      - "main"
+    branches-ignore:
+      - "feat/*"
+
+jobs:
+  gorevive:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - name: Run env prepare revive (golint)
+        run: go install github.com/mgechev/revive@latest
+      - name: Run revive
+        run: revive ./...
+  go-unit-test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - name: Run env go mod
+        run: |
+          go mod download
+      - name: Run go unit tests
+        run: go test -test.short -v ./...
+  go-functional-test:
+    needs: [gorevive, go-unit-test]
+
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - name: Run env go mod
+        run: |
+          go mod download
+      - name: Run go functional test
+        run: go test -v ./...
+  build:
+    needs: [gorevive, go-unit-test, go-functional-test, setup]
+    runs-on: ubuntu-20.04
+    name: Checkout and build
+    env:
+      IMAGE_NAME: ${{ needs.setup.outputs.image_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Docker image build
+        run: |
+          docker build . -t pismo
