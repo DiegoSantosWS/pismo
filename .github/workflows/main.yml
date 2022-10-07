@@ -43,7 +43,7 @@ jobs:
       - name: Run go functional test
         run: go test -v ./...
   build:
-    needs: [gorevive, go-unit-test, go-functional-test, setup]
+    needs: [gorevive, go-unit-test, go-functional-test]
     runs-on: ubuntu-20.04
     name: Checkout and build
     env:
