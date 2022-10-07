@@ -2,6 +2,11 @@
 
 Pismo is a api to create transactions of account
 
+## CLONE
+
+```bash
+$ git clone https://github.com/DiegoSantosWS/pismo.git && cd pismo
+```
 # CONFIG
 
 To use the api you shoud check the file `docker-compose.yml`, on file contains the informations of connections with database
