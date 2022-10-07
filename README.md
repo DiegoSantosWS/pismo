@@ -1,6 +1,6 @@
 # PISMO
 
-Pismo is a api to create transactions of account
+Pismo is a api to creating account transactions
 
 ## CLONE
 
@@ -24,7 +24,7 @@ PG_PORT=5432
 PG_DB=<DB_NAME>
 ```
 
-# RUN PISTMO
+# RUN PISMO
 
 ### GENERATE IMAGE USING COMMAND DOCKER.
 
