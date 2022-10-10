@@ -66,4 +66,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: diegossantosws/pismo:latest
+          tags: diegosantosws/pismo:latest
