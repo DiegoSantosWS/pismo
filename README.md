@@ -1,20 +1,19 @@
 # PISMO
-
-Pismo is a api to creating account transactions
+Pismo is an API for creating account transactions
 
 ## CLONE
 
-```bash
+```shell
 $ git clone https://github.com/DiegoSantosWS/pismo.git && cd pismo
 ```
 # CONFIG
 
-To use the api you shoud check the file `docker-compose.yml`, on file contains the informations of connections with database
+To use the API you should check the file `docker-compose.yml`, on file contains the information connections with the database
 
 
 #### ENV
 
-Create the file `.env` in principal dir.
+Create the file `.env` in the principal dir.
 
 ```env
 PG_HOST=<HOST_DB>
@@ -28,31 +27,32 @@ PG_DB=<DB_NAME>
 
 ### GENERATE IMAGE USING COMMAND DOCKER.
 
-To run the pismo api you shoud executed the command below.
+To run the Pismo API you should execute the command below.
 
-```bash
+
+```shell
 $: docker build . -t pismo:latest
 ```
+> The command generates the image docker for the programmer.
 
-The command generate the image docker to programmer.
-
-Now you need create the database, you can look config in file `docker-compose.yml`, to execute the file you need runed the command below.
+Now you need to create the database, you can look config in the file `docker-compose.yml`, to execute the file you need to run the command below.
 
 ### To execute all:
 
-```bash
+```shell
 $: docker-compose up
 ```
 
-### To execute database in forenground
+You can run each service separately, for example:
 
-```bash
-$ docker-compose up postgres
+```shell
+$: docker-compose up pismo
 ```
 
-### To execute database in background
+### To execute the database in the foreground
 
-```bash
+
+```shell
 $ docker-compose up -d postgres
 ```
 
@@ -60,15 +60,27 @@ $ docker-compose up -d postgres
 
 After of run open the browser or postman and run the endpoints
 
+### Run using the sh file
+
+You too can execute the Pismo API using the command sh.
+
+```shell
+$: sh deploy.sh
+```
+
+> This command will to do download of image `diegosantosws/pismo`, and start all services.
+
 #### CURL REQUEST
 
-```bash
+```shell
 #create account
+
 curl -X POST http://localhost:8080/account
    -H 'Content-Type: application/json'
    -d '{"doc_number":01425836930}'
 
 #create transactions
+
 curl -X POST http://localhost:8080/transactions
    -H 'Content-Type: application/json'
    -d '{"account_id":1,"operations_types_id":4,"amount":7800.00}'
