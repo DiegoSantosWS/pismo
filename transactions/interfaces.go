@@ -3,6 +3,7 @@ package transactions
 import (
 	"context"
 	"log"
+	"pismo/accounts"
 )
 
 // OpTypesGetter represent the operations types
@@ -31,22 +32,49 @@ func RetrieveOperationsTypes() OpTypesGetter {
 	return &dbOp{}
 }
 
+// Verifier interface verifier
+type Verifier interface {
+	GetLimitAccount(ctx context.Context, accID int64) (limit float64, err error)
+}
+
+type dbVerifier struct{}
+
+func (d dbVerifier) GetLimitAccount(ctx context.Context, accID int64) (limit float64, err error) {
+	limit, err = accounts.GetLimitAccount(ctx, accID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	return
+}
+
 // TransactionWriter interfaces to writer in table transaction
 type TransactionWriter interface {
-	CreateTransactions(ctx context.Context, input TransactionInput) (trans Transaction, err error)
+	CreateTransactions(ctx context.Context, v Verifier, input TransactionInput) (trans Transaction, err error)
 }
 
 type dbTransaction struct{}
 
-func (d dbTransaction) CreateTransactions(ctx context.Context, input TransactionInput) (trans Transaction, err error) {
+func (d dbTransaction) CreateTransactions(ctx context.Context, v Verifier, input TransactionInput) (trans Transaction, err error) {
+
 	if err = input.SetDate(); err != nil {
 		log.Println(err)
 		return
 	}
-	return createTransactions(ctx, input)
+
+	trans, err = createTransactions(ctx, input)
+
+	//todo: update value of account
+	return
 }
 
 // RetrieveTransactionWriter access to interfacer of operations
 func RetrieveTransactionWriter() TransactionWriter {
 	return &dbTransaction{}
+}
+
+// RetrieveVerifier access to interfacer of operations
+func RetrieveVerifier() Verifier {
+	return &dbVerifier{}
 }

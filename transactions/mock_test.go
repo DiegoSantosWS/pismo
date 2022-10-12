@@ -42,18 +42,26 @@ func retrieveOperationsTypesMock() transactions.OpTypesGetter {
 	return &dbOpMock{}
 }
 
+type dbVerifierMock struct{}
+
+func (d dbVerifierMock) GetLimitAccount(ctx context.Context, accID int64) (limit float64, err error) {
+
+	return
+}
+
 // TransactionWriter interfaces to writer in table transaction
 type TransactionWriter interface {
-	CreateTransactions(ctx context.Context, input transactions.TransactionInput) (trans transactions.Transaction, err error)
+	CreateTransactions(ctx context.Context, v transactions.Verifier, input transactions.TransactionInput) (trans transactions.Transaction, err error)
 }
 
 type dbTransactionMock struct{}
 
-func (d dbTransactionMock) CreateTransactions(ctx context.Context, input transactions.TransactionInput) (trans transactions.Transaction, err error) {
+func (d dbTransactionMock) CreateTransactions(ctx context.Context, v transactions.Verifier, input transactions.TransactionInput) (trans transactions.Transaction, err error) {
 	if err = input.SetDate(); err != nil {
 		log.Println(err)
 		return
 	}
+
 	switch input.OperationType {
 	case utils.OpAtSight, utils.OpParceling, utils.OpWithdraw:
 		trans = transactions.Transaction{
@@ -78,4 +86,9 @@ func (d dbTransactionMock) CreateTransactions(ctx context.Context, input transac
 // RetrieveTransactionWriter access to interfacer of operations
 func retrieveTransactionWriterMock() TransactionWriter {
 	return &dbTransactionMock{}
+}
+
+// RetrieveTransactionWriter access to interfacer of operations
+func retrieveVerifierMock() transactions.Verifier {
+	return &dbVerifierMock{}
 }

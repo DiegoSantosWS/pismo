@@ -34,7 +34,7 @@ func TestFunctionCreateTransactions(t *testing.T) {
 	w := transactions.RetrieveTransactionWriter()
 
 	t.Run("CREATE NEW TRANSACTION PAGAMENTO", func(t *testing.T) {
-		op, err := transactions.CreateTransaction(ctx, op, w, transactions.TransactionInput{
+		op, err := transactions.CreateTransaction(ctx, op, nil, w, transactions.TransactionInput{
 			AccountID:     2,
 			OperationType: 4,
 			Amount:        10.20,
@@ -47,7 +47,7 @@ func TestFunctionCreateTransactions(t *testing.T) {
 	})
 
 	t.Run("CREATE NEW TRANSACTION WITHDRAW POSITIVE", func(t *testing.T) {
-		_, err := transactions.CreateTransaction(ctx, op, w, transactions.TransactionInput{
+		_, err := transactions.CreateTransaction(ctx, op, nil, w, transactions.TransactionInput{
 			AccountID:     2,
 			OperationType: 3,
 			Amount:        10.20,
@@ -58,7 +58,7 @@ func TestFunctionCreateTransactions(t *testing.T) {
 	})
 
 	t.Run("CREATE NEW TRANSACTION PARCELING", func(t *testing.T) {
-		_, err := transactions.CreateTransaction(ctx, op, w, transactions.TransactionInput{
+		_, err := transactions.CreateTransaction(ctx, op, nil, w, transactions.TransactionInput{
 			AccountID:     2,
 			OperationType: 2,
 			Amount:        -10.20,
@@ -69,7 +69,7 @@ func TestFunctionCreateTransactions(t *testing.T) {
 	})
 
 	t.Run("CREATE NEW TRANSACTION Sigth", func(t *testing.T) {
-		_, err := transactions.CreateTransaction(ctx, op, w, transactions.TransactionInput{
+		_, err := transactions.CreateTransaction(ctx, op, nil, w, transactions.TransactionInput{
 			AccountID:     2,
 			OperationType: 1,
 			Amount:        -100.20,

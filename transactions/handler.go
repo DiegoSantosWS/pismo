@@ -16,7 +16,7 @@ func WriteTransaction(w http.ResponseWriter, r *http.Request) {
 
 	opT := RetrieveOperationsTypes()
 	wr := RetrieveTransactionWriter() // return interface writer
-	trans, err := CreateTransaction(r.Context(), opT, wr, transIn)
+	trans, err := CreateTransaction(r.Context(), opT, nil, wr, transIn)
 	if err != nil {
 		apianswer.AnswerRequest(w, r, nil, err)
 		return

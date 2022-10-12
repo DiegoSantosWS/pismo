@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"pismo/connection"
+	"pismo/errorsapi"
 
 	// Used pg drive on sqlx
 	_ "github.com/lib/pq"
@@ -53,6 +54,20 @@ func createAccount(ctx context.Context, input AccountInput) (acc Account, err er
 		Document:  input.Document,
 		CreatedAt: input.CreatedAt,
 	}
+
+	return
+}
+
+func getLimitAccount(ctx context.Context, accID int64) (limit float64, err error) {
+	db, err := connection.GetConnection(ctx)
+	if err != nil {
+		log.Println("getLimitAccount", err)
+		err = errorsapi.ErrConnectionDB
+		return
+	}
+
+	query := `SELECT avaliable_credit_limit FROM account WHERE id = $1`
+	err = db.QueryRowContext(ctx, query, accID).Scan(&limit)
 
 	return
 }

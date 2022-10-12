@@ -26,3 +26,8 @@ func GetAccount(ctx context.Context, r Reader, accID int64) (acc Account, err er
 	acc, err = r.GetAccount(ctx, accID)
 	return
 }
+
+// GetLimitAccount return the limit account
+func GetLimitAccount(ctx context.Context, accID int64) (limit float64, err error) {
+	return getLimitAccount(ctx, accID)
+}
