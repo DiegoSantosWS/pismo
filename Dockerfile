@@ -1,5 +1,5 @@
 # --- Stage 1:
-FROM golang:1.19-alpine as builder
+FROM golang:1.20-alpine as builder
 
 # ENVs
 ENV BUILD_PATH=/go/src/github.com/DiegoSantosWS/pismo
