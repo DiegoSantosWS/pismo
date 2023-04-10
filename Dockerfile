@@ -4,7 +4,8 @@ FROM golang:1.20-alpine as builder
 # ENVs
 ENV BUILD_PATH=/go/src/github.com/DiegoSantosWS/pismo
 # Install go toolchain
-RUN apk update && apk add --no-cache curl gcc git libc-dev
+RUN apk update
+RUN apk add --no-cache curl gcc git libc-dev
 # COPY local files
 WORKDIR ${BUILD_PATH}
 COPY . .
@@ -13,8 +14,8 @@ COPY . .
 RUN go mod download
 
 # gosec - Golang Security Checker | Commented due to 1.18 update issue.
-RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin latest && \
-   gosec ./...
+# RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin latest && \
+#    gosec ./...
 
 # revive (Go lint successor)
 RUN go install github.com/mgechev/revive@latest && \
